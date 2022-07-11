@@ -19,17 +19,18 @@ class Game {
 
   constructor(height = 6, width = 7) {
     
+    //this.player1;
+    //this.player2;
+
     this.height = height;
     this.width = width;
-    this.currPlayer = 1;
+    this.currPlayer;
     this.board = [];
 
     this.startButton = document.getElementById("startButton");
     this.startButton.addEventListener('click', this.startGame.bind(this));
 
     this.gameInProgress = false;
-    //this.makeBoard();
-    //this.makeHtmlBoard();
   }
 
   makeBoard() {
@@ -69,10 +70,20 @@ class Game {
   }
 
   startGame() {
+    // remove color selection
+    const colorSelect = document.getElementById('gameSetUp');
+    if (colorSelect) {
+      this.player1 = new Player('1', document.getElementById('p1color').value);
+      this.player2 = new Player('2', document.getElementById('p2color').value);
+      this.gameInProgress = true;
+      colorSelect.remove();
+    }
+    
+    // create game board
     const board = document.getElementById('board');
     board.innerHTML = "";
     this.board = [];
-    this.currPlayer = 1;
+    this.currPlayer = this.player1;
     this.makeBoard();
     this.makeHtmlBoard();
     const startButton_1 = document.getElementById('startButton');
@@ -81,7 +92,6 @@ class Game {
   }
 
   findSpotForCol(x) {
-    //console.log('findSpotForCol called');
     for (let y = this.height - 1; y >= 0; y--) {
       if (!this.board[y][x]) {
         return y;
@@ -93,8 +103,9 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.classList.add(`p${this.currPlayer.name}`);
     piece.style.top = -50 * (y + 2);
+    piece.style.backgroundColor = this.currPlayer.color;
   
     const spot = document.getElementById(`${y}-${x}`);
     spot.append(piece);
@@ -111,8 +122,6 @@ class Game {
 
     // get x from ID of clicked cell
     const x = +evt.target.id;
-    //console.log('x: ', x);
-    //console.log('this: ', this);
   
     // get next spot in column (if none, ignore click)
     const y = this.findSpotForCol(x);
@@ -121,12 +130,12 @@ class Game {
     }
   
     // place piece in board and add to HTML table
-    this.board[y][x] = this.currPlayer;
+    this.board[y][x] = this.currPlayer.name;
     this.placeInTable(y, x);
     
     // check for win
     if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer.name} won!`);
     }
     
     // check for tie
@@ -135,7 +144,7 @@ class Game {
     }
       
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.player1 ? this.player2 : this.player1;
   }
 
   checkForWin() {
@@ -150,7 +159,7 @@ class Game {
           y < this.height &&
           x >= 0 &&
           x < this.width &&
-          this.board[y][x] === this.currPlayer
+          this.board[y][x] === this.currPlayer.name
       );
     }
   
@@ -176,9 +185,9 @@ class Game {
 
 
 class Player {
-  constructor() {
-    this.name = '';
-    this.color = '';
+  constructor(name, color='') {
+    this.name = name;
+    this.color = color;
   }
 }
 

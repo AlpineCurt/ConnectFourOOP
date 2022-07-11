@@ -5,9 +5,17 @@
 </head>
 <body>
   <h1>Connect Four</h1>
-<div id="buttons">
-  <button type="button" id="startButton">Start Game</button>
-</div>
+  <form action id="gameSetUp">
+    <p>
+      <label for="p1color">Player 1 Color</label>
+      <input type="color" name="p1color" id="p1color" value="#FF0000"><br>
+      <label for="p2color">Player 2 Color</label>
+      <input type="color" name="p2color" id="p2color" value="#0000FF"><br>
+    </p>
+  </form>
+  <div id="buttons">
+    <button type="button" id="startButton">Start Game</button>
+  </div>
 <div id="game">
   <table id="board"></table>
 </div>
